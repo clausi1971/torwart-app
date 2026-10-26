@@ -44,9 +44,22 @@
 <footer><span>Nach deiner Skizze · Torbreite 7,25 m · Torraumtiefe 5,5 m · Strafraum 40,25 × 16,5 m · 2 m Rand</span><span>Ziehen mit Maus oder Finger · Pfeiltasten für Feinschritte</span></footer></main>
 <script>let keeper3dWindow=null,keeper3dState=null;
 function syncGoalkeeperView(data){keeper3dState=data;if(keeper3dWindow&&!keeper3dWindow.closed&&typeof keeper3dWindow.setKeeperState==='function')keeper3dWindow.setKeeperState(data);}
+function createMobileKeeperView(){
+ const overlay=document.createElement('div'),bar=document.createElement('div'),button=document.createElement('button'),frame=document.createElement('iframe');
+ overlay.id='keeper3dMobileView';overlay.setAttribute('role','dialog');overlay.setAttribute('aria-label','3D-Torwartsicht');overlay.setAttribute('aria-modal','true');overlay.style.cssText='position:fixed;inset:0;z-index:9999;background:#173b30;display:flex;flex-direction:column';
+ bar.style.cssText='height:44px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 12px;color:white;font:600 14px system-ui';bar.textContent='Torwartsicht';
+ button.type='button';button.textContent='Zurück zur 2D-Ansicht';button.style.cssText='border:1px solid #ffffff50;border-radius:7px;background:#ffffff15;color:white;padding:6px 10px;font:inherit;font-size:12px';
+ frame.title='3D-Torwartsicht';frame.style.cssText='width:100%;flex:1;min-height:0;border:0;background:#173b30';
+ const previousOverflow=document.body.style.overflow,previousFocus=document.activeElement;
+ const close=()=>{overlay.remove();document.body.style.overflow=previousOverflow;keeper3dWindow=null;window.closeKeeper3dMobileView=null;if(previousFocus&&previousFocus.focus)previousFocus.focus();};
+ button.addEventListener('click',close);window.closeKeeper3dMobileView=()=>{close();return true;};
+ bar.appendChild(button);overlay.appendChild(bar);overlay.appendChild(frame);document.body.appendChild(overlay);document.body.style.overflow='hidden';button.focus();return frame.contentWindow;
+}
+
 function openGoalkeeperView(){
  if(keeper3dWindow&&!keeper3dWindow.closed){keeper3dWindow.focus();syncGoalkeeperView(keeper3dState);return;}
- keeper3dWindow=window.open('','TorGeometrieTorwartsicht','popup=yes,width=1100,height=780,resizable=yes,scrollbars=no');
+ const mobileView=window.TorGeometrieAndroid===true||(typeof navigator!=='undefined'&&/Android/i.test(navigator.userAgent));
+ keeper3dWindow=mobileView?createMobileKeeperView():window.open('','TorGeometrieTorwartsicht','popup=yes,width=1100,height=780,resizable=yes,scrollbars=no');
  if(!keeper3dWindow){window.alert('Bitte erlaube das zusätzliche Fenster für die 3D-Torwartsicht und klicke erneut auf den Knopf.');return;}
  keeper3dWindow.moveStrikerFrom3D=(x,y)=>{if(Number.isFinite(x)&&Number.isFinite(y)&&typeof setPosition==='function')setPosition(x,y);};
  keeper3dWindow.document.open();
@@ -215,6 +228,7 @@ function goalkeeperViewRuntime(){
  for(const name of ['pointerup','pointercancel','lostpointercapture'])canvas.addEventListener(name,()=>{drag=null;queue();});
  byId('eye').addEventListener('input',e=>{eye=Number(e.target.value);byId('eyeValue').textContent=fmt(eye);queue();});byId('physicalWidth').addEventListener('change',updateCalibration);byId('viewDistance').addEventListener('change',updateCalibration);byId('center').addEventListener('click',()=>{yawOffset=0;pitchOffset=0;queue();});window.addEventListener('resize',resize);window.addEventListener('load',()=>{resize();updateCalibration();},{once:true});if(typeof window.ResizeObserver==='function'){const observer=new window.ResizeObserver(resize);observer.observe(byId('sceneFrame'));}byId('physicalWidth').value='130';byId('viewDistance').value='35';resize();updateCalibration();
 }
+
 
 
 
