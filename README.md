@@ -1,6 +1,6 @@
 # TorGeometrie
 
-Private Torwart-Trainingsapp mit maßstäblicher 2D-Geometrie und 3D-Torwartsicht.
+Torwart-Trainingsapp mit maßstäblicher 2D-Geometrie und 3D-Torwartsicht.
 
 ## Android-App
 
@@ -14,4 +14,5 @@ Auf Android das ZIP entpacken, die APK öffnen und gegebenenfalls die Installati
 
 index.html ist die vollständige App. android-build.cjs erzeugt daraus das native Android-Projekt. Der Workflow .github/workflows/android-apk.yml kompiliert und prüft es. Signierdatei und Passwort werden ausschließlich über GitHub Actions Secrets bereitgestellt und gehören nicht in den Quellcode.
 
-Das Repository bleibt privat. GitHub Pages ist im derzeitigen Tarif deaktiviert.
+Die App ist unter https://clausi1971.github.io/torwart-app/ erreichbar. Das Repository ist auf Wunsch des Nutzers öffentlich.
+
